@@ -1,8 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<platform version="3">
+	<AS id="ASO" routing"Full">
+		<host id="Horus" core="8" power= "8095000000" 
+		availability_file="horus_avail.trace" 
+		state_file="horus.state"/>
+		<host id="Himotep" core="8" power="8095000000"/> 
+		<host id="Ra" core="8" power="8095000000"/>
+		<host id="Anubis" core="8" power="8095000000"/>
+
+		<link id="link5" bandwidth="125000000"
+		latency="0.000100" bandwidth_file="link5.bw" 
+		latency_file="link5.lat"/> 
+		<link id="link1" bandwidth="125000000" 
+		latency="0.000100"/> 
+		<link id="link2" bandwidth="1250000000"
+		latency="0.000100"/>
+		<link id="link3" bandwidth="1250000000"
+		latency="0.000100"/>
+		<link id="link4" bandwidth="1250000000"
+		latency="0.000100"/>
+
+		<route src="Horus" dst="Anubis"><link_ctn id="link5"/>
+		</route>
+		<route src="Horus" dst="Himotep"><link_ctn id="link1"/>
+		</route>
+		<route src="Horus" dst="Ra"><link_ctn id"link2"/>
+		</route>
+		<route src="Himotep" dst="Anubis"><link_ctn id="link3"/>
+		</route>
+		<route src="Ra" dst="Anubis"><link_ctn id="link4"/>
+		</route>
+	</AS> 
+</platform>
+
+
+
 <clouds version="1">
-    <cloud id="hadesStorage">
+    <cloud id="myCloud">
+        
+        <storage id="hadesStorage"
+        engine="org.simgrid.schiaas.engine.storage.rise.Rise">
+            	<config controller="Horus"/>
+        </storage>
+
+        <compute
+            engine="org.simgrid.schiaas.engine.storage.rise.Rise">
+            <config controller="Horus" image_storage="hadesStorage"
+                image_caching="PRE inter_boot_delay='5'"/>
+            <intance_type id="Y1" core="1" memory="500" disk="2000"/>
+            <intance_type id="Y2" core="2" memory="1000" disk="4000"/>
+            <intance_type id="Y3" core="4" memory="2000" disk="4000"/>
+	    <intance_type id="Y4" core="8" memory="4000" disk="8000"/>
+            <image id="myImage" size="1073741824"/>
+            <host id="Himotep"/>
+            <host id="Ra"/>
+	        <host id="Anubis"/>
+        </compute>
 
 
     </clouds>
 </clouds>
 
+
+<process host="Horus" function="cloud.schiaas.Master">
+    <!-- Number of task -->
+    <argument value="20"/>
+    <!-- Computation size of tasks -->
+    <argument value="5e6"/>
+    <!-- Communication size of tasks -->
+    <argument value="1000000"/>
+    <!-- Number of slave processes -->
+    <argument value="40"/>
+</process>
